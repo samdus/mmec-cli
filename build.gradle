@@ -1,0 +1,54 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    if(project.getProperties().get("archiveAddress")) {
+      maven {
+        credentials {
+          username project.getProperties().get("archiveUsername")
+          password project.getProperties().get("archivePassword")
+        }
+        url project.getProperties().get("archiveAddress")
+      }
+    }
+    maven {url "https://plugins.gradle.org/m2/"}
+    mavenCentral()
+    jcenter()
+  }
+  dependencies {
+    classpath "ca.griis:compliance-application:2.+"
+  }
+}
+
+plugins {
+  id "application"
+}
+
+ext {
+  minCoverageUnit = 0
+  minCoverageUnitItgr = 0
+  minMutationUnit = 0
+  isSpringBoot = false
+}
+
+group = "ca.griis"
+version = "1.0.0"
+ext.product = "APPLICATION_CLI"
+ext.applicationMain = "ca.griis.mmec.MMecApplication"
+
+apply plugin: ca.griis.compliance.GriisPlugin
+
+dependencies {
+  annotationProcessor "info.picocli:picocli-codegen:4.7.4"
+  implementation "info.picocli:picocli:4.7.6"
+
+  implementation "ca.griis:logger-library:1.+"
+  implementation "ch.qos.logback:logback-classic"
+
+  implementation "ca.griis:mMec-library:1.+"
+
+  testImplementation "org.junit.jupiter:junit-jupiter-engine"
+}
+
+application {
+  mainClass = applicationMain
+}

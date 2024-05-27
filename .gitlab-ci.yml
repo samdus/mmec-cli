@@ -1,0 +1,357 @@
+
+# Le fichier a été généré par le plugin gradle.
+# cache sur "src/main/resources" car Cert ne sont pas versionnés.
+---
+image: "archive.griis.usherbrooke.ca:5000/runner-java17:latest"
+stages:
+- "identification"
+- "construction"
+- "verification"
+- "validation"
+- "preservation"
+variables:
+  FF_USE_FASTZIP: "true"
+  ARTIFACT_COMPRESSION_LEVEL: "fast"
+  CACHE_COMPRESSION_LEVEL: "fast"
+  DOCKER_HOST: "tcp://docker:2375/"
+  DOCKER_TLS_CERTDIR: ""
+  TESTCONTAINERS_RYUK_DISABLED: "true"
+  GRADLE_USER_HOME: "/cache/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME/.gradle"
+  NPM_USER_HOME: "/cache/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME"
+default:
+  tags:
+  - "araguira"
+  - "privileged"
+cache:
+  key: "$CI_COMMIT_SHA"
+  paths:
+  - "build"
+  - "src/gen"
+  - "src/main/resources"
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      when: never
+    - when: always
+.rules:
+  dev: $CI_COMMIT_BRANCH == 'dev'
+  rc: $CI_COMMIT_BRANCH == 'rc'
+  main: $CI_COMMIT_BRANCH == 'main'
+  defaultrc: $CI_COMMIT_BRANCH =~ /^rc-.*/
+  default: $CI_COMMIT_BRANCH != 'dev' && $CI_COMMIT_BRANCH != 'rc' && $CI_COMMIT_BRANCH != 'main' && $CI_COMMIT_BRANCH !~ /^rc-.*/
+.before_script:
+  identification:
+  - "mkdir -p $HOME/.docker"
+  - "echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json"
+  - "./gradlew tasks --refresh-dependencies"
+  default:
+  - "mkdir -p $HOME/.docker"
+  - "echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json"
+  - "echo 'default'"
+
+.after_script:
+  construction:
+  - "echo 'default'"
+  default:
+  - "echo 'default'"
+
+identification-likedev-identification:
+  stage: "identification"
+  before_script: !reference [.before_script, identification]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew identification -Pflow=dev --refresh-dependencies"
+  rules:
+    - if: !reference [.rules, default]
+
+construction-likedev-construction:
+  stage: "construction"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, construction]
+  script:
+  - "./gradlew construction -Pflow=dev --refresh-dependencies"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, default]
+
+verification-likedev-verification:
+  stage: "verification"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew verification -Pflow=dev"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, default]
+  allow_failure: true
+
+validation-likedev-validation:
+  stage: "validation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew validation -Pflow=dev"
+  rules:
+    - if: !reference [.rules, default]
+
+preservation-likedev-preservation:
+  stage: "preservation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew preservation -Pflow=dev"
+  rules:
+    - if: !reference [.rules, default]
+  when: manual
+
+identification-dev-identification:
+  stage: "identification"
+  before_script: !reference [.before_script, identification]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew identification -Pflow=dev --refresh-dependencies"
+  rules:
+    - if: !reference [.rules, dev]
+
+construction-dev-construction:
+  stage: "construction"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, construction]
+  script:
+  - "./gradlew construction -Pflow=dev --refresh-dependencies"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, dev]
+
+verification-dev-verification:
+  stage: "verification"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew verification -Pflow=dev"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, dev]
+
+validation-dev-validation:
+  stage: "validation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew validation -Pflow=dev"
+  rules:
+    - if: !reference [.rules, dev]
+
+preservation-dev-preservation:
+  stage: "preservation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew preservation -Pflow=dev"
+  rules:
+    - if: !reference [.rules, dev]
+
+
+identification-rc-identification:
+  stage: "identification"
+  before_script: !reference [.before_script, identification]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew identification -Pflow=rc --refresh-dependencies"
+  rules:
+    - if: !reference [.rules, rc]
+
+construction-rc-construction:
+  stage: "construction"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, construction]
+  script:
+  - "./gradlew construction -Pflow=rc --refresh-dependencies"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, rc]
+
+verification-rc-verification:
+  stage: "verification"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew verification -Pflow=rc"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, rc]
+
+validation-rc-validation:
+  stage: "validation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew validation -Pflow=rc"
+  rules:
+    - if: !reference [.rules, rc]
+
+preservation-rc-preservation:
+  stage: "preservation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew preservation -Pflow=rc"
+  rules:
+    - if: !reference [.rules, rc]
+  when: manual
+
+identification-likerc-identification:
+  stage: "identification"
+  before_script: !reference [.before_script, identification]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew identification -Pflow=rc --refresh-dependencies"
+  rules:
+    - if: !reference [.rules, defaultrc]
+
+construction-likerc-construction:
+  stage: "construction"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, construction]
+  script:
+  - "./gradlew construction -Pflow=rc --refresh-dependencies"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, defaultrc]
+
+verification-likerc-verification:
+  stage: "verification"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew verification -Pflow=rc"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, defaultrc]
+
+validation-likerc-validation:
+  stage: "validation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew validation -Pflow=rc"
+  rules:
+    - if: !reference [.rules, defaultrc]
+
+preservation-likerc-preservation:
+  stage: "preservation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew preservation -Pflow=rc"
+  rules:
+    - if: !reference [.rules, defaultrc]
+
+
+identification-main-identification:
+  stage: "identification"
+  before_script: !reference [.before_script, identification]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew identification -Pflow=main --refresh-dependencies"
+  rules:
+    - if: !reference [.rules, main]
+
+construction-main-construction:
+  stage: "construction"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, construction]
+  script:
+  - "./gradlew construction -Pflow=main --refresh-dependencies"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, main]
+
+verification-main-verification:
+  stage: "verification"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew verification -Pflow=main"
+  artifacts:
+    expire_in: "2 days"
+    paths:
+    - "build/reports"
+    - "build/libs"
+    - "build/test-results"
+    when: "always"
+  rules:
+    - if: !reference [.rules, main]
+
+validation-main-validation:
+  stage: "validation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew validation -Pflow=main"
+  rules:
+    - if: !reference [.rules, main]
+
+preservation-main-preservation:
+  stage: "preservation"
+  before_script: !reference [.before_script, default]
+  after_script: !reference [.after_script, default]
+  script:
+  - "./gradlew preservation -Pflow=main"
+  rules:
+    - if: !reference [.rules, main]
+

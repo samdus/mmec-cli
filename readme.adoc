@@ -1,0 +1,30 @@
+// Settings
+:idprefix:
+:idseparator: -
+:page-component-title: Application de mMec
+= {page-component-title}
+
+[#summary]
+== Sommaire
+
+Application en ligne de commande servant à exécuter les commandes de l'API mMec.
+
+[#licence]
+== Copyright et licences
+
+=== Copyright
+
+Copyright 2016-{localyear}, https://griis.ca/[GRIIS]
+
+GRIIS (Groupe de recherche interdisciplinaire en informatique de la santé) +
+Faculté des sciences et Faculté de médecine et sciences de la santé +
+Université de Sherbrooke (Québec) J1K 2R1 +
+
+CANADA
+
+=== Licences
+Le code de ce projet est sous licence link:liliqp-licence.adoc[LILIQ-P]. Click here for the link:liliqp-licence-english.adoc[English version].
+
+La documentation de ce projet est sous licence https://creativecommons.org/licenses/by/4.0/[CC BY 4.0].
+
+
