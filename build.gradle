@@ -50,6 +50,13 @@ dependencies {
   testImplementation "org.mockito:mockito-junit-jupiter"
   testImplementation "org.junit.jupiter:junit-jupiter-engine"
   testImplementation "org.junit.jupiter:junit-jupiter-params"
+
+  // Versions minimales des dépendances transitives de RDF4J pour prévenir le CVE-2018-1000644
+  implementation "org.eclipse.rdf4j:rdf4j-queryparser-serql:[2.4.0, )"
+  implementation "org.eclipse.rdf4j:rdf4j-sail-base:[2.4.0, )"
+  implementation "org.eclipse.rdf4j:rdf4j-sail-inferencer:[2.4.0, )"
+  implementation "org.eclipse.rdf4j:rdf4j-sail-memory:[2.4.0, )"
+  implementation "org.eclipse.rdf4j:rdf4j-sail-model:[2.4.0, )"
 }
 
 application {

@@ -30,6 +30,7 @@ import it.unibz.inf.ontop.exception.OBDASpecificationException;
 import it.unibz.inf.ontop.exception.OntopConnectionException;
 import it.unibz.inf.ontop.exception.OntopReformulationException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
@@ -175,12 +176,12 @@ public class MMecApplication implements Callable<Integer> {
       }
 
       logger.info("Writing facade to file: {}", outputFilePath);
-      Files.write(Paths.get(outputFilePath), facade.getBytes());
+      Files.writeString(Paths.get(outputFilePath), facade, StandardCharsets.UTF_8);
       logger.info("Facade created successfully.");
 
       return CommandLine.ExitCode.OK;
     } catch (DefaultOntopConfigurationNotFound e) {
-      logException("mMec-library was not able to load the default Ontop configuration.\n"
+      logException("mMec-library was not able to load the default Ontop configuration."
           + "You must contact the developer to fix the problem.", e);
       return CommandLine.ExitCode.SOFTWARE;
     } catch (OntopConnectionException e) {
@@ -212,8 +213,11 @@ public class MMecApplication implements Callable<Integer> {
           mappingSchema='%s',
           outputFilePath='%s'
         }
-        """, jdbcUrl, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
-        mappingSchema, outputFilePath);
+        """
+        .replace("\n", "%n"),
+        jdbcUrl, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
+        mappingSchema,
+        outputFilePath);
   }
 
   /**
