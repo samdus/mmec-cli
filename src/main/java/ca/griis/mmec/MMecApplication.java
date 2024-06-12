@@ -215,6 +215,7 @@ public class MMecApplication implements Callable<Integer> {
     return String.format("""
         MMecApplication{
           jdbcUrl='%s',
+          databaseName='%s',
           username='%s',
           password='%s',
           facadeType=%s,
@@ -226,9 +227,8 @@ public class MMecApplication implements Callable<Integer> {
         }
         """
         .replace("\n", "%n"),
-      jdbcUrl, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
-      mappingSchema,
-      outputFilePath);
+      jdbcUrl, databaseName, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
+      mappingSchema, outputFilePath);
   }
 
   /**

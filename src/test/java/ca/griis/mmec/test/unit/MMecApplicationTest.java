@@ -53,6 +53,7 @@ public class MMecApplicationTest {
     String expected = String.format("""
         MMecApplication{
           jdbcUrl='jdbc:postgresql://localhost:5432/source',
+          databaseName='dbName',
           username='user',
           password='password',
           facadeType=VIEWS,
@@ -69,6 +70,7 @@ public class MMecApplicationTest {
 
     int exitCode = commandLine.execute(
         "--db-url", "jdbc:postgresql://localhost:5432/source",
+        "--db-name", "dbName",
         "--db-username", "user",
         "--db-password", "password",
         "--facade", "VIEWS",
