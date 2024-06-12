@@ -67,15 +67,15 @@ import picocli.CommandLine.Option;
  *      S.O.
  */
 @Command(name = "mmec-cli", description = "Command line interface for the MMec application.",
-  mixinStandardHelpOptions = true, version = "1.0")
+    mixinStandardHelpOptions = true, version = "1.0")
 public class MMecApplication implements Callable<Integer> {
   private static final GriisLogger logger = GriisLoggerFactory.getLogger(MMecApplication.class);
 
   private static final String driverName = "org.postgresql.Driver";
 
   @Option(names = {"-d", "--db-url"}, required = true,
-    description = "Database JDBC URL to the source database. The database must be a PostgreSQL "
-      + "database and contains the OntoRelCat.")
+      description = "Database JDBC URL to the source database. The database must be a PostgreSQL "
+          + "database and contains the OntoRelCat.")
   private String jdbcUrl;
 
   @Option(names = {"-n", "--db-name"}, required = true, description = "Database name.")
@@ -88,24 +88,24 @@ public class MMecApplication implements Callable<Integer> {
   private String password;
 
   @Option(names = {"-f", "--facade"}, type = FacadeType.class, defaultValue = "VIEWS",
-    description = "Type of facade to generate. Options: ${COMPLETION-CANDIDATES}."
-      + " Default: ${DEFAULT-VALUE}.")
+      description = "Type of facade to generate. Options: ${COMPLETION-CANDIDATES}."
+          + " Default: ${DEFAULT-VALUE}.")
   private FacadeType facadeType;
 
   @Option(names = {"-m", "--mapping-file"}, required = true,
-    description = "Path to the mapping file.")
+      description = "Path to the mapping file.")
   private String mappingFile;
 
   @Option(names = {"-t", "--ontology-file"}, required = true,
-    description = "Path to the ontology file.")
+      description = "Path to the ontology file.")
   private String ontologyFile;
 
   @Option(names = {"-i", "--id-ontorel"}, required = true,
-    description = "OntoRel identifier in the OntoRelCat.")
+      description = "OntoRel identifier in the OntoRelCat.")
   private String ontoRelId;
 
   @Option(names = {"-s", "--facade-schema"}, required = true,
-    description = "Schema to use for the mapping.")
+      description = "Schema to use for the mapping.")
   private String mappingSchema;
 
   @Option(names = {"-o", "--output"}, required = true, description = "Output file for the facade.")
@@ -134,9 +134,9 @@ public class MMecApplication implements Callable<Integer> {
     MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
 
     int exitCode = new CommandLine(mmecApplication)
-      .setOptionsCaseInsensitive(true)
-      .setSubcommandsCaseInsensitive(true)
-      .execute(args);
+        .setOptionsCaseInsensitive(true)
+        .setSubcommandsCaseInsensitive(true)
+        .execute(args);
 
     logger.info(Info.APP_CLOSING);
     logger.debug("Exit code: {}", exitCode);
@@ -151,31 +151,31 @@ public class MMecApplication implements Callable<Integer> {
 
     try {
       ConnectionProperties connectionProperties = new ConnectionPropertiesBuilder()
-        .withDriverName(driverName)
-        .withDatabaseName(databaseName)
-        .withJdbcUrl(jdbcUrl)
-        .withUsername(username)
-        .withPassword(password)
-        .build();
+          .withDriverName(driverName)
+          .withDatabaseName(databaseName)
+          .withJdbcUrl(jdbcUrl)
+          .withUsername(username)
+          .withPassword(password)
+          .build();
 
       logger.debug("Connection properties: {}", connectionProperties);
 
       MappingProperties mappingProperties = new MappingPropertiesBuilder()
-        .withOntoRelId(ontoRelId)
-        .withMappingSchema(mappingSchema).withR2rmlMappingFilePath(mappingFile)
-        .withOntologyFilePath(ontologyFile)
-        .build();
+          .withOntoRelId(ontoRelId)
+          .withMappingSchema(mappingSchema).withR2rmlMappingFilePath(mappingFile)
+          .withOntologyFilePath(ontologyFile)
+          .build();
 
       logger.debug("Mapping properties: {}", mappingProperties);
 
       FacadeProperties facadeProperties = new FacadePropertiesBuilder()
-        .withFacadeType(facadeType)
-        .build();
+          .withFacadeType(facadeType)
+          .build();
 
       logger.debug("Facade properties: {}", facadeProperties);
 
       String facade = mmecService.createFacade(connectionProperties,
-        mappingProperties, facadeProperties);
+          mappingProperties, facadeProperties);
 
       if (facade == null) {
         logger.error("mMec service was not able to return a façade.");
@@ -189,7 +189,7 @@ public class MMecApplication implements Callable<Integer> {
       return CommandLine.ExitCode.OK;
     } catch (DefaultOntopConfigurationNotFound e) {
       logException("mMec-library was not able to load the default Ontop configuration."
-        + "You must contact the developer to fix the problem.", e);
+          + "You must contact the developer to fix the problem.", e);
       return CommandLine.ExitCode.SOFTWARE;
     } catch (OntopConnectionException e) {
       logException("An error occurred while connecting Ontop to the database.", e);
@@ -205,7 +205,7 @@ public class MMecApplication implements Callable<Integer> {
       return CommandLine.ExitCode.SOFTWARE;
     } catch (MissingPropertyException e) {
       logException(String.format("Cannot build the properties. %s",
-        e.getMessage()), e);
+          e.getMessage()), e);
       return CommandLine.ExitCode.SOFTWARE;
     }
   }
@@ -227,8 +227,8 @@ public class MMecApplication implements Callable<Integer> {
         }
         """
         .replace("\n", "%n"),
-      jdbcUrl, databaseName, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
-      mappingSchema, outputFilePath);
+        jdbcUrl, databaseName, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
+        mappingSchema, outputFilePath);
   }
 
   /**
