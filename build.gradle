@@ -62,3 +62,20 @@ dependencies {
 application {
   mainClass = applicationMain
 }
+
+tasks.register('majDistribution') {
+  dependsOn('construction')
+
+  doFirst {
+    println("Updating distribution...")
+  }
+
+  copy {
+    from layout.buildDirectory.file("distributions/mmec-cli-${project.version}.zip")
+    into layout.projectDirectory.dir("distributions")
+  }
+
+  doLast {
+    println("File mmec-cli-${project.version}.zip successfully copied.")
+  }
+}
