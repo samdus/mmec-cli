@@ -9,6 +9,65 @@
 
 Application en ligne de commande servant à exécuter les commandes de l'API mMec.
 
+[#usage]
+== Utilisation
+
+----
+Usage: mmec-cli [-hV] -d=<jdbcUrl> [-f=<facadeType>] -i=<ontoRelId>
+                -m=<mappingFile> -n=<databaseName> -o=<outputFilePath>
+                -p=<password> -s=<mappingSchema> -t=<ontologyFile> -u=<username>
+Command line interface for the MMec application.
+  -d, --db-url=<jdbcUrl>   Database JDBC URL to the source database. The
+                             database must be a PostgreSQL database and
+                             contains the OntoRelCat.
+  -f, --facade=<facadeType>
+                           Type of facade to generate. Options: VIEWS, INSERTS.
+                             Default: VIEWS.
+  -h, --help               Show this help message and exit.
+  -i, --id-ontorel=<ontoRelId>
+                           OntoRel identifier in the OntoRelCat.
+  -m, --mapping-file=<mappingFile>
+                           Path to the mapping file.
+  -n, --db-name=<databaseName>
+                           Database name.
+  -o, --output=<outputFilePath>
+                           Output file for the facade.
+  -p, --db-password=<password>
+                           Database password.
+  -s, --facade-schema=<mappingSchema>
+                           Schema to use for the mapping.
+  -t, --ontology-file=<ontologyFile>
+                           Path to the ontology file.
+  -u, --db-username=<username>
+                           Database username.
+  -V, --version            Print version information and exit.
+----
+
+[#examples]
+== Exemples
+
+Plusieurs exemples d'arrimage mMec sont disponibles dans le https://depot.griis.usherbrooke.ca/prototypes/mad/relrel/mMEC/-/tree/dev/src/test/resources/testset?ref_type=heads[dépôt du projet mMec].
+
+Pour exécuter un exemple, il suffit de lancer une commande semblable à celle-ci :
+----
+mmec-cli --db-url="jdbc:postgresql://localhost:59385/test" \
+         --db-name="test" \
+         --db-username=test \
+         --db-password=test \
+         --ontology-file=src/test/resources/testset/coverage/ontology.ttl \
+         --mapping-file=src/test/resources/testset/coverage/mapping.ttl \
+         --facade-schema=facade \
+         --id-ontorel=coverage \
+         --facade=VIEWS \
+         --output=facade-views.sql
+----
+
+[#installation]
+Récupérer le zip de la dernière version disponible sous build/distributions/ et dézipper le contenu. Vous pourrez ensuite utiliser le script mmec-cli sous Unix  ou mmec-cli.bat sous Windows.
+
+[#build]
+Simple exécution de la tâche `construction` de Gradle. Pour générer le projet comme s'il s'agissait de la branche dev, exécuter la tâche `./gradlew construction -pFlow=dev`.
+
 [#licence]
 == Copyright et licences
 
