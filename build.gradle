@@ -62,3 +62,23 @@ dependencies {
 application {
   mainClass = applicationMain
 }
+
+//TODO: Modifier compliance pour ajouter le répertoire "build/distributions" aux artefacts
+tasks.register('majDistribution') {
+  doFirst {
+    println("Updating distribution...")
+  }
+
+  copy {
+    from layout.buildDirectory.file("distributions/mmec-cli-${project.version}.zip")
+    into layout.buildDirectory.dir("libs")
+  }
+
+  doLast {
+    println("File mmec-cli-${project.version}.zip successfully copied.")
+  }
+}
+
+tasks.named("construction") {
+  dependsOn(tasks.named("majDistribution"))
+}
