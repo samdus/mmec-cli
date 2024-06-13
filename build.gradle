@@ -66,20 +66,38 @@ application {
 
 //TODO: Modifier compliance pour ajouter le répertoire "build/distributions" aux artefacts
 tasks.register('majDistribution') {
-  doFirst {
-    println("Updating distribution...")
-  }
+  dependsOn(tasks.named("distZip"))
 
-  copy {
-    from layout.buildDirectory.file("distributions/mmec-cli-${project.version}.zip")
-    into layout.buildDirectory.dir("libs")
+  def fileName = "mmec-cli-${project.version}.zip"
+  doFirst {
+    def zipFile = layout.buildDirectory.file("distributions/${fileName}").get().getAsFile()
+    def libsDir = layout.buildDirectory.dir("libs").get().getAsFile()
+
+    if(!zipFile.exists()) {
+      throw new GradleException("Cannot find ${zipFile.getPath()}.")
+    }
+
+    if (!libsDir.exists()) {
+      println("Creating libs directory...")
+      if (!libsDir.mkdirs()) {
+        throw new GradleException("Cannot create libs directory.")
+      }
+    }
   }
 
   doLast {
-    println("File mmec-cli-${project.version}.zip successfully copied.")
+    copy {
+      from layout.buildDirectory.file("distributions/${fileName}")
+      into layout.buildDirectory.dir("libs")
+    }
+
+    def zipFile = layout.buildDirectory.file("libs/${fileName}").get().getAsFile()
+    if (!zipFile.exists()) {
+      throw new GradleException("File ${fileName} as not been copied.")
+    }
   }
 }
 
 tasks.named("construction") {
-  dependsOn(tasks.named("majDistribution"))
+  finalizedBy(tasks.named("majDistribution"))
 }
