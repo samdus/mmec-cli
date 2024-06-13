@@ -63,7 +63,10 @@ mmec-cli --db-url="jdbc:postgresql://localhost:59385/test" \
 ----
 
 [#installation]
-Récupérer le zip de la dernière version disponible dans le répertoire "link:./build/distributions[distributions]" et dézipper le contenu. Vous pourrez ensuite utiliser le script mmec-cli sous Unix  ou mmec-cli.bat sous Windows. Ces scripts se trouvent dans le répertoire /bin du zip.
+. Récupérer la dernière version de l'artefact du projet (artifacts.zip) via https://depot.griis.usherbrooke.ca/prototypes/mad/relrel/mmec-cli/-/artifacts[gitlab] en sélectionnant la tâche construction la plus récente.
+. Dézipper le fichier artifacts.zip.
+. Dézipper le fichier build/libs/mmec-cli-1.0.0.zip.
+. Les scripts mmec-cli pour Unix et mmec-cli.bat pour Windows sont maintenant disponible. Ces scripts se trouvent dans le répertoire /bin.
 
 [#build]
 Simple exécution de la tâche `construction` de Gradle. Pour générer le projet comme s'il s'agissait de la branche dev, exécuter la tâche `./gradlew construction -pFlow=dev`.
