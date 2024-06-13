@@ -63,6 +63,7 @@ application {
   mainClass = applicationMain
 }
 
+
 //TODO: Modifier compliance pour ajouter le répertoire "build/distributions" aux artefacts
 tasks.register('majDistribution') {
   doFirst {
