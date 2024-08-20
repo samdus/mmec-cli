@@ -18,7 +18,9 @@ import ca.griis.logger.GriisLoggerFactory;
 import ca.griis.logger.statuscode.Info;
 import ca.griis.mmec.api.MMecFacadeService;
 import ca.griis.mmec.api.MMecFacadeServiceBase;
+import ca.griis.mmec.api.exception.ConnectionException;
 import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFound;
+import ca.griis.mmec.converter.LogLevelConverter;
 import ca.griis.mmec.properties.ConnectionProperties;
 import ca.griis.mmec.properties.FacadeProperties;
 import ca.griis.mmec.properties.FacadeType;
@@ -27,6 +29,9 @@ import ca.griis.mmec.properties.MissingPropertyException;
 import ca.griis.mmec.properties.builder.ConnectionPropertiesBuilder;
 import ca.griis.mmec.properties.builder.FacadePropertiesBuilder;
 import ca.griis.mmec.properties.builder.MappingPropertiesBuilder;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import it.unibz.inf.ontop.exception.OBDASpecificationException;
 import it.unibz.inf.ontop.exception.OntopConnectionException;
 import it.unibz.inf.ontop.exception.OntopReformulationException;
@@ -35,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -108,6 +114,12 @@ public class MMecApplication implements Callable<Integer> {
       description = "Schema to use for the mapping.")
   private String mappingSchema;
 
+  @Option(names = {"-l", "--log-level"}, type = Level.class, defaultValue = "ERROR",
+      fallbackValue = "ERROR", converter = LogLevelConverter.class,
+      description = "Set the log level. Options: TRACE, DEBUG, INFO, WARN, ERROR. "
+          + "Default: ${DEFAULT-VALUE}.")
+  private Level logLevel;
+
   @Option(names = {"-o", "--output"}, required = true, description = "Output file for the facade.")
   private String outputFilePath;
 
@@ -148,6 +160,8 @@ public class MMecApplication implements Callable<Integer> {
   public Integer call() {
     logger.info("Creating facade...");
     logger.debug("Arguments: {}", this.toString());
+
+    setLogLevel(logLevel);
 
     try {
       ConnectionProperties connectionProperties = new ConnectionPropertiesBuilder()
@@ -207,7 +221,16 @@ public class MMecApplication implements Callable<Integer> {
       logException(String.format("Cannot build the properties. %s",
           e.getMessage()), e);
       return CommandLine.ExitCode.SOFTWARE;
+    } catch (ConnectionException e) {
+      logException("An error occurred while connecting to the database.", e);
+      return CommandLine.ExitCode.SOFTWARE;
     }
+  }
+
+  private void setLogLevel(Level level) {
+    LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    Logger rootLogger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    rootLogger.setLevel(level);
   }
 
   @Override
@@ -223,12 +246,13 @@ public class MMecApplication implements Callable<Integer> {
           ontologyFile='%s',
           ontoRelId='%s',
           mappingSchema='%s',
-          outputFilePath='%s'
+          outputFilePath='%s',
+          logLevel='%s'
         }
         """
         .replace("\n", "%n"),
         jdbcUrl, databaseName, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
-        mappingSchema, outputFilePath);
+        mappingSchema, outputFilePath, logLevel);
   }
 
   /**
@@ -245,6 +269,19 @@ public class MMecApplication implements Callable<Integer> {
    */
   public static void logException(String message, Throwable e) {
     logger.error(message);
+
+    if (e.getMessage() != null && !e.getMessage().isEmpty()) {
+      logger.error("[detail] {}", e.getMessage());
+    }
+
+    Throwable cause;
+    while ((cause = e.getCause()) != null) {
+      if (cause.getMessage() != null) {
+        logger.error("[cause] {}", cause.getMessage());
+      }
+      e = cause;
+    }
+
     logger.debug(message, e);
   }
 }

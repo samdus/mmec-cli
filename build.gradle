@@ -43,6 +43,7 @@ dependencies {
 
   implementation "ca.griis:logger-library:1.+"
   implementation "ch.qos.logback:logback-classic"
+  implementation 'org.slf4j:slf4j-api:2.0.0'
 
   implementation "ca.griis:mMec-library:1.+"
 
