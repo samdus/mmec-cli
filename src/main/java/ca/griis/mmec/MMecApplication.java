@@ -224,6 +224,9 @@ public class MMecApplication implements Callable<Integer> {
     } catch (ConnectionException e) {
       logException("An error occurred while connecting to the database.", e);
       return CommandLine.ExitCode.SOFTWARE;
+    } catch (Exception e) {
+      logException("An unexpected error occurred.", e);
+      return CommandLine.ExitCode.SOFTWARE;
     }
   }
 
