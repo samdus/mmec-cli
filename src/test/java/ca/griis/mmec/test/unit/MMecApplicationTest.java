@@ -44,8 +44,8 @@ public class MMecApplicationTest {
 
   @Test
   public void testToString()
-    throws OBDASpecificationException, OntopConnectionException, OntopReformulationException,
-    IOException, DefaultOntopConfigurationNotFound, ConnectionException {
+      throws OBDASpecificationException, OntopConnectionException, OntopReformulationException,
+      IOException, DefaultOntopConfigurationNotFound, ConnectionException {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
     MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
     CommandLine commandLine = new CommandLine(mmecApplication);

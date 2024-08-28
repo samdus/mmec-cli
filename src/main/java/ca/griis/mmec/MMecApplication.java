@@ -1,12 +1,8 @@
 /**
  * @file
- *
  * @copyright @@GRIIS_COPYRIGHT@@
- *
  * @licence @@GRIIS_LICENCE@@
- *
  * @version @@GRIIS_VERSION@@
- *
  * @brief @~french Implémentation de la classe MMecApplication.
  * @brief @~english MMecApplication class implementation.
  */
@@ -39,6 +35,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -56,7 +53,7 @@ import picocli.CommandLine.Option;
  * @par Limits
  *      «Limits description (optional)»
  *
- * @brief @~french «Brève description de la composante (classe, interface, ...)»
+ * @brief @~french Application console pour la génération de façades mMec.
  * @par Détails
  *      S.O.
  * @par Modèle
@@ -145,10 +142,8 @@ public class MMecApplication implements Callable<Integer> {
     MMecFacadeService mmecFacadeService = new MMecFacadeServiceBase();
     MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
 
-    int exitCode = new CommandLine(mmecApplication)
-        .setOptionsCaseInsensitive(true)
-        .setSubcommandsCaseInsensitive(true)
-        .execute(args);
+    int exitCode = new CommandLine(mmecApplication).setOptionsCaseInsensitive(true)
+        .setSubcommandsCaseInsensitive(true).execute(args);
 
     logger.info(Info.APP_CLOSING);
     logger.debug("Exit code: {}", exitCode);
@@ -164,32 +159,26 @@ public class MMecApplication implements Callable<Integer> {
     setLogLevel(logLevel);
 
     try {
-      ConnectionProperties connectionProperties = new ConnectionPropertiesBuilder()
-          .withDriverName(driverName)
-          .withDatabaseName(databaseName)
-          .withJdbcUrl(jdbcUrl)
-          .withUsername(username)
-          .withPassword(password)
-          .build();
+      ConnectionProperties connectionProperties =
+          new ConnectionPropertiesBuilder().withDriverName(driverName)
+              .withDatabaseName(databaseName)
+              .withJdbcUrl(jdbcUrl).withUsername(username).withPassword(password).build();
 
       logger.debug("Connection properties: {}", connectionProperties);
 
-      MappingProperties mappingProperties = new MappingPropertiesBuilder()
-          .withOntoRelId(ontoRelId)
-          .withMappingSchema(mappingSchema).withR2rmlMappingFilePath(mappingFile)
-          .withOntologyFilePath(ontologyFile)
-          .build();
+      MappingProperties mappingProperties =
+          new MappingPropertiesBuilder().withOntoRelId(ontoRelId).withMappingSchema(mappingSchema)
+              .withR2rmlMappingFilePath(mappingFile).withOntologyFilePath(ontologyFile).build();
 
       logger.debug("Mapping properties: {}", mappingProperties);
 
-      FacadeProperties facadeProperties = new FacadePropertiesBuilder()
-          .withFacadeType(facadeType)
-          .build();
+      FacadeProperties facadeProperties =
+          new FacadePropertiesBuilder().withFacadeType(facadeType).build();
 
       logger.debug("Facade properties: {}", facadeProperties);
 
-      String facade = mmecService.createFacade(connectionProperties,
-          mappingProperties, facadeProperties);
+      String facade =
+          mmecService.createFacade(connectionProperties, mappingProperties, facadeProperties);
 
       if (facade == null) {
         logger.error("mMec service was not able to return a façade.");
@@ -201,31 +190,8 @@ public class MMecApplication implements Callable<Integer> {
       logger.info("Facade created successfully.");
 
       return CommandLine.ExitCode.OK;
-    } catch (DefaultOntopConfigurationNotFound e) {
-      logException("mMec-library was not able to load the default Ontop configuration."
-          + "You must contact the developer to fix the problem.", e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (OntopConnectionException e) {
-      logException("An error occurred while connecting Ontop to the database.", e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (OBDASpecificationException e) {
-      logException("An error was detected in the mapping file.", e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (OntopReformulationException e) {
-      logException("An error occurred while generating a query for the mapping.", e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (IOException e) {
-      logException("An error occurred while writing the facade to a file.", e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (MissingPropertyException e) {
-      logException(String.format("Cannot build the properties. %s",
-          e.getMessage()), e);
-      return CommandLine.ExitCode.SOFTWARE;
-    } catch (ConnectionException e) {
-      logException("An error occurred while connecting to the database.", e);
-      return CommandLine.ExitCode.SOFTWARE;
     } catch (Exception e) {
-      logException("An unexpected error occurred.", e);
+      logException(e);
       return CommandLine.ExitCode.SOFTWARE;
     }
   }
@@ -252,25 +218,39 @@ public class MMecApplication implements Callable<Integer> {
           outputFilePath='%s',
           logLevel='%s'
         }
-        """
-        .replace("\n", "%n"),
-        jdbcUrl, databaseName, username, password, facadeType, mappingFile, ontologyFile, ontoRelId,
-        mappingSchema, outputFilePath, logLevel);
+        """.replace("\n", "%n"), jdbcUrl, databaseName, username, password, facadeType, mappingFile,
+        ontologyFile, ontoRelId, mappingSchema, outputFilePath, logLevel);
   }
+
+  private static final HashMap<Class<? extends Throwable>, String> exceptionMessages =
+      new HashMap<>() {
+        {
+          put(DefaultOntopConfigurationNotFound.class,
+              "mMec-library was not able to load the default Ontop configuration."
+                  + "You must contact the developer to fix the problem.");
+          put(OntopConnectionException.class,
+              "An error occurred while connecting Ontop to the database.");
+          put(OBDASpecificationException.class, "An error was detected in the mapping file.");
+          put(OntopReformulationException.class,
+              "An error occurred while generating a query for the mapping.");
+          put(IOException.class, "An error occurred while writing the facade to a file.");
+          put(MissingPropertyException.class, "Cannot build the properties.");
+          put(ConnectionException.class, "An error occurred while connecting to the database.");
+        }
+      };
 
   /**
    * @brief @~english
-   * @param message
    * @param e
    *
    * @brief @~french Affiche l'erreur à l'utilisateur et ajoute l'exception en debug
-   * @param message le message d'erreur dans un format compréhensible à l'utilisateur
    * @param e l'exception à logger
    *
    * @par Tâches
    *      S.O.
    */
-  public static void logException(String message, Throwable e) {
+  public static void logException(Throwable e) {
+    String message = exceptionMessages.getOrDefault(e.getClass(), "An unexpected error occurred.");
     logger.error(message);
 
     if (e.getMessage() != null && !e.getMessage().isEmpty()) {
