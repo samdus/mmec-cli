@@ -28,7 +28,7 @@ import picocli.CommandLine;
  *      «Limits description (optional)»
  *
  * @brief @~french Classe permettant de convertir un paramètre en chaîne de caractère en
- *                 Level de LogBack.
+ *        Level de LogBack.
  * @par Détails
  *      S.O.
  * @par Modèle

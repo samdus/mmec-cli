@@ -252,6 +252,11 @@ $RECYCLE.BIN/
 **/build/
 !src/**/build/
 
+#Lorsque c'est des liens symboliques pour la cache.
+build
+src/gen
+src/main/resources/cert
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
