@@ -15,7 +15,7 @@ import ca.griis.logger.statuscode.Info;
 import ca.griis.mmec.api.MMecFacadeService;
 import ca.griis.mmec.api.MMecFacadeServiceBase;
 import ca.griis.mmec.api.exception.ConnectionException;
-import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFound;
+import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFoundException;
 import ca.griis.mmec.converter.LogLevelConverter;
 import ca.griis.mmec.properties.ConnectionProperties;
 import ca.griis.mmec.properties.FacadeProperties;
@@ -225,7 +225,7 @@ public class MMecApplication implements Callable<Integer> {
   private static final HashMap<Class<? extends Throwable>, String> exceptionMessages =
       new HashMap<>() {
         {
-          put(DefaultOntopConfigurationNotFound.class,
+          put(DefaultOntopConfigurationNotFoundException.class,
               "mMec-library was not able to load the default Ontop configuration."
                   + "You must contact the developer to fix the problem.");
           put(OntopConnectionException.class,

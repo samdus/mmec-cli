@@ -16,7 +16,7 @@ package ca.griis.mmec.test.unit;
 import ca.griis.mmec.MMecApplication;
 import ca.griis.mmec.api.MMecFacadeService;
 import ca.griis.mmec.api.exception.ConnectionException;
-import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFound;
+import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFoundException;
 import it.unibz.inf.ontop.exception.OBDASpecificationException;
 import it.unibz.inf.ontop.exception.OntopConnectionException;
 import it.unibz.inf.ontop.exception.OntopReformulationException;
@@ -45,7 +45,7 @@ public class MMecApplicationTest {
   @Test
   public void testToString()
       throws OBDASpecificationException, OntopConnectionException, OntopReformulationException,
-      IOException, DefaultOntopConfigurationNotFound, ConnectionException {
+      IOException, DefaultOntopConfigurationNotFoundException, ConnectionException {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
     MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
     CommandLine commandLine = new CommandLine(mmecApplication);
