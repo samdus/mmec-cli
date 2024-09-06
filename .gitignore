@@ -291,9 +291,7 @@ src/main/gen
 src/test/resources/temp/
 *.gz
 version.txt
-src/main/resources/META-INF/artifact
-src/main/resources/META-INF/machine
-src/main/resources/META-INF/project
+src/main/resources/META-INF
 *.crt
 *.csr
 *.key
