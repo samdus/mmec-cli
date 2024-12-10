@@ -20,9 +20,11 @@ import ca.griis.mmec.api.exception.DefaultOntopConfigurationNotFoundException;
 import it.unibz.inf.ontop.exception.OBDASpecificationException;
 import it.unibz.inf.ontop.exception.OntopConnectionException;
 import it.unibz.inf.ontop.exception.OntopReformulationException;
+import it.unibz.inf.ontop.injection.impl.MMecConfiguration;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -31,11 +33,30 @@ import picocli.CommandLine;
 public class MMecApplicationTest {
   @TempDir
   static Path tempDir;
+  private MMecConfiguration.MMecConfigurationBuilder mMecConfigurationBuilder;
+
+  @BeforeEach
+  public void setup() {
+    mMecConfigurationBuilder =
+        Mockito.mock(MMecConfiguration.MMecConfigurationBuilder.class);
+
+    Mockito.when(mMecConfigurationBuilder.properties(Mockito.any()))
+        .thenReturn(mMecConfigurationBuilder);
+    Mockito.when(mMecConfigurationBuilder.r2rmlMappingFile((String) Mockito.any()))
+        .thenReturn(mMecConfigurationBuilder);
+    Mockito.when(mMecConfigurationBuilder.ontologyFile((String) Mockito.any()))
+        .thenReturn(mMecConfigurationBuilder);
+    Mockito.when(mMecConfigurationBuilder.mappingProperties(Mockito.any()))
+        .thenReturn(mMecConfigurationBuilder);
+    Mockito.when(mMecConfigurationBuilder.facadeProperties(Mockito.any()))
+        .thenReturn(mMecConfigurationBuilder);
+  }
 
   @Test
   public void testWithoutArgs() {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
-    MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
+    MMecApplication mmecApplication =
+        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
     CommandLine commandLine = new CommandLine(mmecApplication);
 
     int exitCode = commandLine.execute();
@@ -47,7 +68,8 @@ public class MMecApplicationTest {
       throws OBDASpecificationException, OntopConnectionException, OntopReformulationException,
       IOException, DefaultOntopConfigurationNotFoundException, ConnectionException {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
-    MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
+    MMecApplication mmecApplication =
+        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
     CommandLine commandLine = new CommandLine(mmecApplication);
 
     String outputFile = tempDir.resolve("output.sql").toString();
@@ -67,7 +89,7 @@ public class MMecApplicationTest {
         }
         """, outputFile);
 
-    Mockito.when(mmecFacadeService.createFacade(Mockito.any(), Mockito.any(), Mockito.any()))
+    Mockito.when(mmecFacadeService.createFacade(Mockito.any()))
         .thenReturn("facade");
 
     int exitCode = commandLine.execute(

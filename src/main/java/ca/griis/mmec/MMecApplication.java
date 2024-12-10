@@ -31,6 +31,7 @@ import ch.qos.logback.classic.LoggerContext;
 import it.unibz.inf.ontop.exception.OBDASpecificationException;
 import it.unibz.inf.ontop.exception.OntopConnectionException;
 import it.unibz.inf.ontop.exception.OntopReformulationException;
+import it.unibz.inf.ontop.injection.impl.MMecConfiguration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -121,9 +122,12 @@ public class MMecApplication implements Callable<Integer> {
   private String outputFilePath;
 
   private final MMecFacadeService mmecService;
+  private final MMecConfiguration.MMecConfigurationBuilder mmecConfigurationBuilder;
 
-  public MMecApplication(MMecFacadeService mmecService) {
+  public MMecApplication(MMecFacadeService mmecService,
+      MMecConfiguration.MMecConfigurationBuilder mmecConfigurationBuilder) {
     this.mmecService = mmecService;
+    this.mmecConfigurationBuilder = mmecConfigurationBuilder;
   }
 
   /**
@@ -140,7 +144,10 @@ public class MMecApplication implements Callable<Integer> {
     logger.info(Info.APP_STARTING);
 
     MMecFacadeService mmecFacadeService = new MMecFacadeServiceBase();
-    MMecApplication mmecApplication = new MMecApplication(mmecFacadeService);
+    MMecConfiguration.MMecConfigurationBuilder mMecConfigurationBuilder =
+        new MMecConfiguration.MMecConfigurationBuilder();
+    MMecApplication mmecApplication =
+        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
 
     int exitCode = new CommandLine(mmecApplication).setOptionsCaseInsensitive(true)
         .setSubcommandsCaseInsensitive(true).execute(args);
@@ -160,25 +167,42 @@ public class MMecApplication implements Callable<Integer> {
 
     try {
       ConnectionProperties connectionProperties =
-          new ConnectionPropertiesBuilder().withDriverName(driverName)
+          new ConnectionPropertiesBuilder()
+              .withDriverName(driverName)
               .withDatabaseName(databaseName)
-              .withJdbcUrl(jdbcUrl).withUsername(username).withPassword(password).build();
+              .withJdbcUrl(jdbcUrl)
+              .withUsername(username)
+              .withPassword(password)
+              .build();
 
       logger.debug("Connection properties: {}", connectionProperties);
 
       MappingProperties mappingProperties =
-          new MappingPropertiesBuilder().withOntoRelId(ontoRelId).withMappingSchema(mappingSchema)
-              .withR2rmlMappingFilePath(mappingFile).withOntologyFilePath(ontologyFile).build();
+          new MappingPropertiesBuilder()
+              .withOntoRelId(ontoRelId)
+              .withMappingSchema(mappingSchema)
+              .withR2rmlMappingFilePath(mappingFile)
+              .withOntologyFilePath(ontologyFile)
+              .build();
 
       logger.debug("Mapping properties: {}", mappingProperties);
 
       FacadeProperties facadeProperties =
-          new FacadePropertiesBuilder().withFacadeType(facadeType).build();
+          new FacadePropertiesBuilder()
+              .withFacadeType(facadeType)
+              .build();
 
       logger.debug("Facade properties: {}", facadeProperties);
 
-      String facade =
-          mmecService.createFacade(connectionProperties, mappingProperties, facadeProperties);
+      MMecConfiguration configuration = mmecConfigurationBuilder
+          .properties(connectionProperties.getPropertiesForOntop())
+          .r2rmlMappingFile(mappingFile)
+          .ontologyFile(ontologyFile)
+          .mappingProperties(mappingProperties)
+          .facadeProperties(facadeProperties)
+          .build();
+
+      String facade = mmecService.createFacade(configuration);
 
       if (facade == null) {
         logger.error("mMec service was not able to return a façade.");

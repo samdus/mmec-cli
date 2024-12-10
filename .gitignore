@@ -481,3 +481,8 @@ project.txt
 **/trial/**/*.log
 **/trial/**/*.json
 **/trial/**/detail/*.txt
+
+######################
+# Infinispan cache
+######################
+/global
