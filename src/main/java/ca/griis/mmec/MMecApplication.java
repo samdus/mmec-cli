@@ -122,12 +122,12 @@ public class MMecApplication implements Callable<Integer> {
   private String outputFilePath;
 
   private final MMecFacadeService mmecService;
-  private final MMecConfiguration.MMecConfigurationBuilder mmecConfigurationBuilder;
+  private final MMecConfiguration.MMecConfigurationBuilder configBuilder;
 
   public MMecApplication(MMecFacadeService mmecService,
-      MMecConfiguration.MMecConfigurationBuilder mmecConfigurationBuilder) {
+      MMecConfiguration.MMecConfigurationBuilder configBuilder) {
     this.mmecService = mmecService;
-    this.mmecConfigurationBuilder = mmecConfigurationBuilder;
+    this.configBuilder = configBuilder;
   }
 
   /**
@@ -144,13 +144,15 @@ public class MMecApplication implements Callable<Integer> {
     logger.info(Info.APP_STARTING);
 
     MMecFacadeService mmecFacadeService = new MMecFacadeServiceBase();
-    MMecConfiguration.MMecConfigurationBuilder mMecConfigurationBuilder =
+    MMecConfiguration.MMecConfigurationBuilder configBuilder =
         new MMecConfiguration.MMecConfigurationBuilder();
     MMecApplication mmecApplication =
-        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
+        new MMecApplication(mmecFacadeService, configBuilder);
 
-    int exitCode = new CommandLine(mmecApplication).setOptionsCaseInsensitive(true)
-        .setSubcommandsCaseInsensitive(true).execute(args);
+    int exitCode = new CommandLine(mmecApplication)
+        .setOptionsCaseInsensitive(true)
+        .setSubcommandsCaseInsensitive(true)
+        .execute(args);
 
     logger.info(Info.APP_CLOSING);
     logger.debug("Exit code: {}", exitCode);
@@ -194,7 +196,7 @@ public class MMecApplication implements Callable<Integer> {
 
       logger.debug("Facade properties: {}", facadeProperties);
 
-      MMecConfiguration configuration = mmecConfigurationBuilder
+      MMecConfiguration configuration = configBuilder
           .properties(connectionProperties.getPropertiesForOntop())
           .r2rmlMappingFile(mappingFile)
           .ontologyFile(ontologyFile)

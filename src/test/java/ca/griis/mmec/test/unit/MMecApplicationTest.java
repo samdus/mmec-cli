@@ -33,30 +33,30 @@ import picocli.CommandLine;
 public class MMecApplicationTest {
   @TempDir
   static Path tempDir;
-  private MMecConfiguration.MMecConfigurationBuilder mMecConfigurationBuilder;
+  private MMecConfiguration.MMecConfigurationBuilder configBuilder;
 
   @BeforeEach
   public void setup() {
-    mMecConfigurationBuilder =
+    configBuilder =
         Mockito.mock(MMecConfiguration.MMecConfigurationBuilder.class);
 
-    Mockito.when(mMecConfigurationBuilder.properties(Mockito.any()))
-        .thenReturn(mMecConfigurationBuilder);
-    Mockito.when(mMecConfigurationBuilder.r2rmlMappingFile((String) Mockito.any()))
-        .thenReturn(mMecConfigurationBuilder);
-    Mockito.when(mMecConfigurationBuilder.ontologyFile((String) Mockito.any()))
-        .thenReturn(mMecConfigurationBuilder);
-    Mockito.when(mMecConfigurationBuilder.mappingProperties(Mockito.any()))
-        .thenReturn(mMecConfigurationBuilder);
-    Mockito.when(mMecConfigurationBuilder.facadeProperties(Mockito.any()))
-        .thenReturn(mMecConfigurationBuilder);
+    Mockito.when(configBuilder.properties(Mockito.any()))
+        .thenReturn(configBuilder);
+    Mockito.when(configBuilder.r2rmlMappingFile((String) Mockito.any()))
+        .thenReturn(configBuilder);
+    Mockito.when(configBuilder.ontologyFile((String) Mockito.any()))
+        .thenReturn(configBuilder);
+    Mockito.when(configBuilder.mappingProperties(Mockito.any()))
+        .thenReturn(configBuilder);
+    Mockito.when(configBuilder.facadeProperties(Mockito.any()))
+        .thenReturn(configBuilder);
   }
 
   @Test
   public void testWithoutArgs() {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
     MMecApplication mmecApplication =
-        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
+        new MMecApplication(mmecFacadeService, configBuilder);
     CommandLine commandLine = new CommandLine(mmecApplication);
 
     int exitCode = commandLine.execute();
@@ -69,7 +69,7 @@ public class MMecApplicationTest {
       IOException, DefaultOntopConfigurationNotFoundException, ConnectionException {
     MMecFacadeService mmecFacadeService = Mockito.mock(MMecFacadeService.class);
     MMecApplication mmecApplication =
-        new MMecApplication(mmecFacadeService, mMecConfigurationBuilder);
+        new MMecApplication(mmecFacadeService, configBuilder);
     CommandLine commandLine = new CommandLine(mmecApplication);
 
     String outputFile = tempDir.resolve("output.sql").toString();
