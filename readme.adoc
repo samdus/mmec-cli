@@ -78,7 +78,15 @@ Afin de mettre à jour la distribution manuelle, exécuter la tâche `./gradlew 
 
 === Copyright
 
-Copyright 2016-{localyear}, https://griis.ca/[GRIIS]
+Copyright 2018-{localyear}, https://www.linkedin.com/in/samueldussault/[Samuel Dussault]
+
+Copyright 2018-{localyear}, https://www.usherbrooke.ca/informatique/nous-joindre/personnel/corps-professoral/professeurs/luc-lavoie[Luc Lavoie]
+
+Copyright 2018-{localyear}, https://www.usherbrooke.ca/recherche/fr/specialistes/details/jean-francois.ethier[Jean-François Ethier]
+
+Copyright 2018-{localyear}, https://www.usherbrooke.ca/informatique/nous-joindre/personnel/corps-professoral/professeurs/christina-khnaisser[Christina Khnaisser]
+
+Copyright 2018-{localyear}, https://griis.ca/[GRIIS]
 
 GRIIS (Groupe de recherche interdisciplinaire en informatique de la santé) +
 Faculté des sciences et Faculté de médecine et sciences de la santé +
@@ -87,8 +95,7 @@ Université de Sherbrooke (Québec) J1K 2R1 +
 CANADA
 
 === Licences
-Le code de ce projet est sous licence link:liliqp-licence.adoc[LILIQ-P]. Click here for the link:liliqp-licence-english.adoc[English version].
-
-La documentation de ce projet est sous licence https://creativecommons.org/licenses/by/4.0/[CC BY 4.0].
+Le code de ce projet est sous licence link:LiLiQ-R11.txt[LILIQ-R]. Click here for the
+link:LILIQ-R11EN.txt[English version].
 
 
