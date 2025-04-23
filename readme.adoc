@@ -46,9 +46,9 @@ Command line interface for the MMec application.
 [#examples]
 == Exemples
 
-Plusieurs exemples d'arrimage mMec sont disponibles dans le https://depot.griis.usherbrooke.ca/prototypes/mad/relrel/mMEC/-/tree/dev/src/test/resources/testset?ref_type=heads[dépôt du projet mMec].
+Plusieurs exemples d'arrimage mMec sont disponibles dans le https://github.com/samdus/mmec-library/tree/main/src/test/resources/testset[dépôt du projet mMec].
 
-Pour exécuter un exemple, il suffit de lancer une commande semblable à celle-ci :
+Pour exécuter un exemple, il suffit de lancer une commande de cette façon:
 ----
 mmec-cli --db-url="jdbc:postgresql://localhost:59385/test" \
          --db-name="test" \
@@ -63,9 +63,8 @@ mmec-cli --db-url="jdbc:postgresql://localhost:59385/test" \
 ----
 
 [#installation]
-. Récupérer la dernière version de l'artefact du projet (artifacts.zip) via https://depot.griis.usherbrooke.ca/prototypes/mad/relrel/mmec-cli/-/artifacts[gitlab] en sélectionnant la tâche construction la plus récente.
-. Dézipper le fichier artifacts.zip.
-. Dézipper le fichier build/libs/mmec-cli-1.0.0.zip.
+. Récupérer la dernière version de l'https://github.com/samdus/mmec-cli/releases/download/1.0.0/mmec-cli-1.0.0.zip[artefact du projet].
+. Dézipper le fichier mmec-cli-1.0.0.zip
 . Les scripts mmec-cli pour Unix et mmec-cli.bat pour Windows sont maintenant disponible. Ces scripts se trouvent dans le répertoire /bin.
 
 [#build]
